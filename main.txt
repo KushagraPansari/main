@@ -1,0 +1,908 @@
+------------------------------------------------------------------------------
+Lab3Q1:
+
+
+ImageAdapter.java:
+
+package com.example.galleryapp;
+
+
+import android.content.Context;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.GridView;
+import android.widget.ImageView;
+
+public class ImageAdapter extends BaseAdapter {
+    private Context mContext;
+
+    private int[] mThumbIds = {
+            R.drawable.random1,
+            //R.drawable.random2,
+            //R.drawable.random3,
+            R.drawable.random4,
+            R.drawable.random5,
+            R.drawable.random6,
+            R.drawable.random7,
+            R.drawable.random8,
+    };
+
+    public ImageAdapter(Context c) {
+        mContext = c;
+    }
+
+    @Override
+    public int getCount() {
+        return mThumbIds.length;
+    }
+
+    @Override
+    public Integer getItem(int position) {
+        return mThumbIds[position];
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return 0;
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        ImageView imageView;
+        if (convertView == null) {
+            imageView = new ImageView(mContext);
+            imageView.setLayoutParams(new GridView.LayoutParams(200, 200));
+            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            imageView.setPadding(8, 8, 8, 8);
+        } else {
+            imageView = (ImageView) convertView;
+        }
+
+        imageView.setImageResource(mThumbIds[position]);
+        return imageView;
+    }
+}
+
+
+
+
+MainAcitvity.java
+package com.example.galleryapp;
+
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        GridView gridView = findViewById(R.id.gridView);
+        gridView.setAdapter(new ImageAdapter(this));
+
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+                Toast.makeText(getApplicationContext(), "Image " + (position + 1), Toast.LENGTH_SHORT).show();
+
+                int selectedImageId = ((ImageAdapter) parent.getAdapter()).getItem(position);
+
+                ImageView imageView = new ImageView(MainActivity.this);
+                imageView.setImageResource(selectedImageId);
+
+                Toast toast = new Toast(getApplicationContext());
+                toast.setView(imageView);
+                toast.show();
+            }
+        });
+
+    }
+}
+
+acrivity_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <GridView
+        android:id="@+id/gridView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:numColumns="3"
+        android:columnWidth="100dp"
+        android:verticalSpacing="8dp"
+        android:horizontalSpacing="8dp"
+        android:stretchMode="columnWidth"
+        android:gravity="center"
+        android:padding="16dp"/>
+
+</RelativeLayout>
+
+--------------------------------------------------------------------------
+
+Lab3Q2:
+
+package com.example.feedback;
+
+
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.RatingBar;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    private RatingBar ratingBar;
+    private EditText commentEditText, nameEditText, emailEditText, mobileEditText;
+    private Button submitButton;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        ratingBar = findViewById(R.id.ratingBar);
+        commentEditText = findViewById(R.id.commentEditText);
+        nameEditText = findViewById(R.id.nameEditText);
+        emailEditText = findViewById(R.id.emailEditText);
+        mobileEditText = findViewById(R.id.mobileEditText);
+        submitButton = findViewById(R.id.submitButton);
+
+        submitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                submitFeedback();
+            }
+        });
+    }
+
+    private void submitFeedback() {
+        float rating = ratingBar.getRating();
+        String comment = commentEditText.getText().toString();
+        String name = nameEditText.getText().toString();
+        String email = emailEditText.getText().toString();
+        String mobile = mobileEditText.getText().toString();
+
+        String feedbackMessage = "Rating: " + rating +
+                "\nComment: " + comment +
+                "\nName: " + name +
+                "\nEmail: " + email +
+                "\nMobile: " + mobile;
+
+        Toast.makeText(this, feedbackMessage, Toast.LENGTH_LONG).show();
+    }
+}
+
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <RatingBar
+        android:id="@+id/ratingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:stepSize="1.0"
+        android:numStars="5"/>
+
+
+    <EditText
+        android:id="@+id/commentEditText"
+        android:layout_width="390dp"
+        android:layout_height="55dp"
+        android:layout_below="@id/ratingBar"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:hint="Add your comment here" />
+
+    <EditText
+        android:id="@+id/nameEditText"
+        android:layout_width="395dp"
+        android:layout_height="58dp"
+        android:layout_below="@id/commentEditText"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:hint="Your Name" />
+
+    <EditText
+        android:id="@+id/emailEditText"
+        android:layout_width="395dp"
+        android:layout_height="58dp"
+        android:layout_below="@id/nameEditText"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:hint="Your Email" />
+
+    <EditText
+        android:id="@+id/mobileEditText"
+        android:layout_width="395dp"
+        android:layout_height="61dp"
+        android:layout_below="@id/emailEditText"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:hint="Your Mobile Number"
+        android:inputType="phone" />
+
+    <Button
+        android:id="@+id/submitButton"
+        android:layout_width="wrap_content"
+        android:layout_height="61dp"
+        android:layout_below="@id/mobileEditText"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="Submit Feedback" />
+</RelativeLayout>
+------------------------------------------------------------------------------
+
+
+
+L4Q1:
+
+
+MainActivity.java:
+package com.example.quizapp;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        Button startQuizButton = findViewById(R.id.startQuizButton);
+        startQuizButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, QuizActivity.class));
+            }
+        });
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+QuizActivity.java:
+package com.example.quizapp;
+
+
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.TextView;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class QuizActivity extends AppCompatActivity {
+
+    private RadioGroup radioGroup1, radioGroup2, radioGroup3, radioGroup4, radioGroup5;
+    private Button submitButton;
+
+    public int score = 0;
+    public static final int tr_score = 0;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_quiz);
+
+        radioGroup1 = findViewById(R.id.optionsRadioGroup);
+        radioGroup2 = findViewById(R.id.optionsRadioGroup2);
+        radioGroup3 = findViewById(R.id.optionsRadioGroup3);
+        radioGroup4 = findViewById(R.id.optionsRadioGroup4);
+        radioGroup5 = findViewById(R.id.optionsRadioGroup5);
+
+        submitButton = findViewById(R.id.button);
+        submitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showSubmitConfirmationDialog();
+            }
+        });
+    }
+
+    private void showSubmitConfirmationDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Do you want to submit the quiz?")
+                .setPositiveButton("Submit", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        int score = calculateScore();
+                        showResultActivity(score);
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                    }
+                });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private int calculateScore() {
+
+
+        // Example: Check the selected radio button for each question
+        if (isCorrectAnswer(radioGroup1, R.id.option2RadioButton)) {
+            score++;
+        }
+        if (isCorrectAnswer(radioGroup2, R.id.option3RadioButton2)) {
+            score++;
+        }
+        if (isCorrectAnswer(radioGroup3, R.id.option2RadioButton3)) {
+            score++;
+        }
+        if (isCorrectAnswer(radioGroup4, R.id.option3RadioButton4)) {
+            score++;
+        }
+        if (isCorrectAnswer(radioGroup5, R.id.option2RadioButton5)) {
+            score++;
+        }
+
+        return score;
+    }
+    private boolean isCorrectAnswer(RadioGroup radioGroup, int correctOptionId) {
+        int selectedRadioButtonId = radioGroup.getCheckedRadioButtonId();
+        return selectedRadioButtonId == correctOptionId;
+    }
+
+    String str = Integer.valueOf(score).toString();
+    private void showResultActivity(int score) {
+        Intent intent = new Intent(this, ResultPage.class);
+
+        Bundle bundle = new Bundle();
+        bundle.putString("Stuff",str);
+        intent.putExtra("MY_INTEGER_KEY", score);
+        intent.putExtras(bundle);
+        startActivity(intent);
+    }
+}
+
+
+
+
+ResultPage.java:
+
+
+package com.example.quizapp;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.widget.TextView;
+
+public class ResultPage extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_result_page);
+        Intent intent = getIntent();
+        int receivedInteger = intent.getIntExtra("MY_INTEGER_KEY", 0);
+        String str = Integer.valueOf(receivedInteger).toString();
+        TextView res = findViewById(R.id.textView6);
+        res.setText("Your score is: "+str);
+    }
+}
+
+
+
+<!-- activity_main.xml -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <Button
+        android:id="@+id/startQuizButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="Start Quiz" />
+</RelativeLayout>
+
+
+
+
+
+<!-- res/layout/activity_quiz.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@android:color/holo_blue_dark">
+
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Which is a metal"
+        android:textSize="20dp"/>
+    <RadioGroup
+        android:id="@+id/optionsRadioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/option1RadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="carbon" />
+
+        <RadioButton
+            android:id="@+id/option2RadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="helium" />
+
+        <RadioButton
+            android:id="@+id/option3RadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="mercury" />
+
+        <RadioButton
+            android:id="@+id/option4RadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="sulphur" />
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Question 2"
+        android:textSize="20dp" />
+    <RadioGroup
+        android:id="@+id/optionsRadioGroup2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/option1RadioButton2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="carbon" />
+
+        <RadioButton
+            android:id="@+id/option2RadioButton2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="helium" />
+
+        <RadioButton
+            android:id="@+id/option3RadioButton2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="mercury" />
+
+        <RadioButton
+            android:id="@+id/option4RadioButton2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="sulphur" />
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Question 3"
+        android:textSize="20dp" />
+    <RadioGroup
+        android:id="@+id/optionsRadioGroup3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/option1RadioButton3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="carbon" />
+
+        <RadioButton
+            android:id="@+id/option2RadioButton3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="helium" />
+
+        <RadioButton
+            android:id="@+id/option3RadioButton3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="mercury" />
+
+        <RadioButton
+            android:id="@+id/option4RadioButton3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="sulphur" />
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Question 4"
+        android:textSize="20dp" />
+    <RadioGroup
+        android:id="@+id/optionsRadioGroup4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/option1RadioButton4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="carbon" />
+
+        <RadioButton
+            android:id="@+id/option2RadioButton4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="helium" />
+
+        <RadioButton
+            android:id="@+id/option3RadioButton4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="mercury" />
+
+        <RadioButton
+            android:id="@+id/option4RadioButton4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="sulphur" />
+    </RadioGroup>
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Question 5"
+        android:textSize="20dp" />
+    <RadioGroup
+        android:id="@+id/optionsRadioGroup5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/option1RadioButton5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="carbon" />
+
+        <RadioButton
+            android:id="@+id/option2RadioButton5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="helium" />
+
+        <RadioButton
+            android:id="@+id/option3RadioButton5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="mercury" />
+
+        <RadioButton
+            android:id="@+id/option4RadioButton5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="sulphur" />
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="380dp"
+        android:layout_height="wrap_content"
+        android:text="submit"
+        android:textSize="20dp"/>
+</LinearLayout>
+
+
+
+
+activity_result_page.xml:
+
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Resultpage">
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="89dp"
+        android:layout_marginTop="148dp"
+        android:textSize="30dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+------------------------------------------------------------------------------
+
+Lab5Q1:
+
+MainActivity.java:
+
+package com.example.mediap;
+
+
+
+import android.media.MediaPlayer;
+import android.os.Bundle;
+import android.os.Handler;
+import android.view.View;
+import android.widget.Button;
+import android.widget.SeekBar;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    private MediaPlayer mediaPlayer;
+    private Button startButton, pauseButton, rewindButton, forwardButton;
+    private SeekBar seekBar;
+    private Handler handler = new Handler();
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        mediaPlayer = MediaPlayer.create(this, R.raw.sample_audio);
+        startButton = findViewById(R.id.startButton);
+        pauseButton = findViewById(R.id.pauseButton);
+        rewindButton = findViewById(R.id.rewindButton);
+        forwardButton = findViewById(R.id.forwardButton);
+        seekBar = findViewById(R.id.seekBar);
+
+        initializeSeekBar();
+
+        startButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startMediaPlayer();
+            }
+        });
+
+        pauseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                pauseMediaPlayer();
+            }
+        });
+
+        rewindButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                rewindMediaPlayer();
+            }
+        });
+
+        forwardButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                forwardMediaPlayer();
+            }
+        });
+
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                seekBar.setProgress(0);
+            }
+        });
+
+        mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mediaPlayer) {
+                seekBar.setMax(mediaPlayer.getDuration());
+                updateSeekBar();
+            }
+        });
+
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser) {
+                    mediaPlayer.seekTo(progress);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
+    }
+
+    private void startMediaPlayer() {
+        if (!mediaPlayer.isPlaying()) {
+            mediaPlayer.start();
+            updateSeekBar();
+        }
+    }
+
+    private void pauseMediaPlayer() {
+        if (mediaPlayer.isPlaying()) {
+            mediaPlayer.pause();
+        }
+    }
+
+    private void rewindMediaPlayer() {
+        int currentPosition = mediaPlayer.getCurrentPosition();
+        int newPosition = currentPosition - 5000;
+
+        if (newPosition < 0) {
+            newPosition = 0;
+        }
+
+        mediaPlayer.seekTo(newPosition);
+    }
+
+    private void forwardMediaPlayer() {
+        int currentPosition = mediaPlayer.getCurrentPosition();
+        int newPosition = currentPosition + 5000;
+
+        int duration = mediaPlayer.getDuration();
+        if (newPosition > duration) {
+            newPosition = duration;
+        }
+
+        mediaPlayer.seekTo(newPosition);
+    }
+
+    private void initializeSeekBar() {
+        seekBar.setProgress(0);
+        seekBar.setMax(0);
+    }
+
+    private void updateSeekBar() {
+        if (mediaPlayer.isPlaying()) {
+            seekBar.setProgress(mediaPlayer.getCurrentPosition());
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    updateSeekBar();
+                }
+            }, 1000);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
+    }
+}
+
+
+
+
+
+
+
+
+activity_main.xml:
+<!-- res/layout/activity_main.xml -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <!-- Buttons -->
+
+    <Button
+        android:id="@+id/startButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginRight="8dp"
+        android:text="Start" />
+
+    <Button
+        android:id="@+id/pauseButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pause"
+        android:layout_toRightOf="@id/startButton"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="8dp"/>
+
+    <!-- SeekBar -->
+    <Button
+        android:id="@+id/rewindButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/startButton"
+        android:layout_marginTop="221dp"
+        android:text="Rewind" />
+
+    <Button
+        android:id="@+id/forwardButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/pauseButton"
+        android:layout_marginTop="-261dp"
+        android:text="Forward" />
+
+    <SeekBar
+        android:id="@+id/seekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/forwardButton"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"/>
+</RelativeLayout>
+
+create a new android resource directory inside res and name it raw and paste the audio in raw
+
